@@ -1,14 +1,14 @@
 #!/bin/bash
 
 <<com
-git push to github automatically
+git commit automatically
 com
 
 cd ~/Engineer/MyCodes/Tools
 git add .
 
 is_change=0
-temFile=~/Engineer/MyCodes/temp/temFile_push
+temFile=~/Engineer/MyCodes/temp/temFile
 # comments="automatically update: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
 # Determine if a file is exists, if file is not exists, then creat it.
@@ -28,6 +28,5 @@ done < ${temFile}
 # Commit and push
 if [ $is_change == 1 ]
 then 
-	git commit -m "automatically update:🐍"$(date +"%Y-%m-%d-%H:%M:%S")
-	git push
+	git commit -m "automatically update:"📔$(date +"%Y-%m-%d-%H:%M:%S")
 fi
