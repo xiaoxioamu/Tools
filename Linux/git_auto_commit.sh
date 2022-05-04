@@ -4,8 +4,8 @@
 git commit automatically
 com
 
-cd ~/Engineer/MyCodes/Tools
-git add .
+# cd ~/Engineer/MyCodes/Tools
+# git add .
 
 cd ~/Engineer/MyCodes
 tree -d -L 1 -i > tempfile 
@@ -24,7 +24,7 @@ while read line; do
 			if [ ! -e ${temFile} ]; then 
 				touch ${temFile}
 			fi 
-
+			git add .
 			git status > ${temFile}
 
 			# Read temFile's information, if finds changed file, then sets is_change to 1
