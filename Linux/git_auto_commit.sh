@@ -7,6 +7,7 @@ com
 cd ~/Engineer/MyCodes/Tools
 git add .
 
+
 is_change=0
 temFile=~/Engineer/MyCodes/temp/temFile_commit
 # comments="automatically update: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
