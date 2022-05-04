@@ -1,4 +1,5 @@
 import os
+import argparse 
 import shutil
 
 def calculate_image_size(path: str) -> list : 
@@ -188,7 +189,7 @@ def multi_export(
 		over (bool): if over==True, the condition is over the hw_value, 
 			if over==False, the condition is less the hw_value
 		img_export (bool): if bool==True, export filtered image to specified folder
-		label_comp_export (bool): if label_comp_export is True, export label'information 
+		label_comp_export (bool): if label_comp_export is True, export label's information 
 	"""
 
 	if not os.path.exists(label_export_dir):
@@ -219,14 +220,25 @@ def multi_export(
 			extract_imgs(key, labels_comp, hw_value)	
 
 
+def parse_args():
+	parser = argparse.ArgumentParser(description="Sort image labels, filter images and labels")
+	parser.add_argument('-p', "--path_list", type=list, default=["labels/train.txt", "labels/test.txt", "labels/other.txt"], help="label table list")
+	parser.add_argument('-l', "--label_export_dir", type=str, default="export", help="Filtered label table exported path")
+	parser.add_argument('-v', "--hw_value", type=int, default=None, help="Threshold value to filter")
+	parser.add_argument("--over", type=bool, default=True, help="To determine over or less the threshold")
+	parser.add_argument("--img_export", type=bool, default=True, help="If img_export is True, image export")
+	parser.add_argument("--label_comp_export", type=bool, default=True, help="If label_comp_export is true, sorted label information will be export")
+	
+	args = parser.parse_args()
+	return args
+
+
 if __name__ == "__main__":
-	path_list = ["labels/train.txt", "labels/test.txt", "labels/other.txt"]
-	label_export_dir = "export"
-	hw_value = 30
-	multi_export(path_list, 
-				label_export_dir, 
-				hw_value, 
-				over=False, 
-				img_export=True, 
-				label_comp_export=True,
+	args = parse_args()
+	multi_export(args.path_list, 
+				args.label_export_dir, 
+				args.hw_value, 
+				args.over, 
+				args.img_export, 
+				args.label_comp_export,
 				)
