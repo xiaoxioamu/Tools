@@ -1,4 +1,4 @@
-import os 
+import os
 from tqdm import tqdm 
 import cv2 as cv
 

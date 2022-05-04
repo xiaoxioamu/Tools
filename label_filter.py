@@ -1,7 +1,6 @@
 import os
 import shutil
 
-
 def calculate_image_size(path: str) -> list : 
 	"""
 	Calculcate the image's height, weight, area and label's table.

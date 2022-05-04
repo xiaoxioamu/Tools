@@ -1,4 +1,6 @@
 import cv2 
+import torch 
+import numpy
 
 class crop_image:
 	def __init__():
