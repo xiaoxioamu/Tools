@@ -1,4 +1,4 @@
-### Dataset ioriginal folder structure
+### Dataset original folder structure
 ```bash
 paper_data/
 ├── images
@@ -35,7 +35,7 @@ paper_data/
 ├── images
 │   ├── marks
 │   ├── other
-│   ├── size_less_30  # processed by label_filter.py
+│   ├── size_less_30  # Processed by label_filter.py
 │   │   ├── other
 │   │   ├── test
 │   │   └── train
@@ -43,7 +43,7 @@ paper_data/
 │   └── train
 └── labels
     ├── other
-    ├── size_less_30  # processed by label_filter.py
+    ├── size_less_30  # Processed by label_filter.py
     │   ├── other
     │   ├── test
     │   └── train
