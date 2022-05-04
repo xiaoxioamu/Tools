@@ -36,10 +36,11 @@ while read line; do
 
 			# Commit and push
 			if [ $is_change == 1 ]
-			echo "starting commit 🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻 "${line} 
+			echo "starting commit -- 🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻🚣🏻 -->"${line} 
 			then 
 				git commit -m "automatically update:"📔$(date +"%Y-%m-%d-%H:%M:%S")
 			fi
+			echo "\n"
 		fi; cd ..
 	fi 
 done < tempfile 
