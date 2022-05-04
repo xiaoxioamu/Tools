@@ -1,4 +1,5 @@
 import os 
+from tqdm import tqdm 
 import cv2 as cv
 
 
@@ -36,7 +37,7 @@ def draw_boxes(path: str,
 	with open(path) as f:
 		label_data = f.readlines()
 	
-	for txt in label_data:
+	for txt in tqdm(label_data):
 		txt = txt.strip()
 
 		img_dir = os.path.split(txt)[0].replace('labels', 'images')
