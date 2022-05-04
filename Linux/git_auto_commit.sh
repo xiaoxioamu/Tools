@@ -8,7 +8,7 @@ cd ~/Engineer/MyCodes/Tools
 git add .
 
 is_change=0
-temFile=~/Engineer/MyCodes/temp/temFile
+temFile=~/Engineer/MyCodes/temp/temFile_commit
 # comments="automatically update: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
 # Determine if a file is exists, if file is not exists, then creat it.
