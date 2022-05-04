@@ -40,7 +40,7 @@ while read line; do
 			then 
 				git commit -m "automatically update:"📔$(date +"%Y-%m-%d-%H:%M:%S")
 			fi
-			\n
+			echo -e "\n"
 		fi; cd ..
 	fi 
 done < tempfile 
