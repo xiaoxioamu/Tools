@@ -28,6 +28,6 @@ done < ${temFile}
 # Commit and push
 if [ $is_change == 1 ]
 then 
-	git commit -m "automatically update:"$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	git commit -m "automatically update:"$(date +"%Y-%m-%d-%H:%M:%S")
 	git push
 fi
