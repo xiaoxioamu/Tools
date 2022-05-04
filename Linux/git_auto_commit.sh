@@ -4,9 +4,6 @@
 git commit automatically
 com
 
-# cd ~/Engineer/MyCodes/Tools
-# git add .
-
 cd ~/Engineer/MyCodes
 tree -d -L 1 -i > tempfile 
 sed -i '1d' tempfile
@@ -18,7 +15,6 @@ while read line; do
 		if [ -e .git ]; then 
 			is_change=0
 			temFile=~/Engineer/MyCodes/temp/temFile_commit
-			# comments="automatically update: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
 			# Determine if a file is exists, if file is not exists, then creat it.
 			if [ ! -e ${temFile} ]; then 
