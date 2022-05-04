@@ -5,6 +5,7 @@ git push to github automatically
 com
 
 cd ~/Engineer/MyCodes/Tools
+git pull
 git add .
 
 is_change=0
