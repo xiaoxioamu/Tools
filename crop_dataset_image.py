@@ -157,7 +157,7 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
-	def update_label(self):
+	def update_label(self, size: int):
 		for label_path, _, img_path in self.get_label_img_path():
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
@@ -169,6 +169,13 @@ class ImageProc:
 							box_coor = [int(i) for i in box_coor]
 							boxes_coor_c.append(box_coor)
 						boxes_coor_c.sort(key=lambda x : x[0])
+						box_base = boxes_coor_c[0]
+
+						xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2))	
+						temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+						xmax, ymax = (int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp))
+						box_coor_c = [xmin, ymin, xmax, ymax]
+						
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
