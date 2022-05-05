@@ -158,24 +158,34 @@ class ImageProc:
 
 
 	def update_label(self, size: int):
+
+		"""
+		Update cropped image label
+
+		Args:
+			size (int): Specify the image size to crop			
+		"""
+
 		for label_path, _, img_path in self.get_label_img_path():
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
 					boxes_coor = self.label2xywh(label_path)
-					boxes_coor_c = []
+					boxes_coor_xyhw = []
 					if boxes_coor is not None: 
 						for box_coor in boxes_coor:
 							box_coor = [int(i) for i in box_coor]
-							boxes_coor_c.append(box_coor)
-						boxes_coor_c.sort(key=lambda x : x[0])
-						box_base = boxes_coor_c[0]
+							boxes_coor_xyhw.append(box_coor)
+						boxes_coor_xyhw.sort(key=lambda x : x[0])
+						box_base = boxes_coor_xyhw[0]
 
-						xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2))	
-						temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+						xmin, ymin = (int(i) if i > 0 else 0 for i in (box_base[0] - size / 2, box_base[1] - size / 2))	
+						temp = box_base[0] + size / 2, box_base[1] + size / 2
 						xmax, ymax = (int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp))
-						box_coor_c = [xmin, ymin, xmax, ymax]
+						box_base_xyxy = [xmin, ymin, xmax, ymax]
 						
+						box_base_xyxy
+
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
@@ -257,4 +267,4 @@ if __name__ == "__main__":
 		# image_proc.crop_img_objects()
 		# image_proc.crop_spec_size_img(crop_size)
 		# image_proc.detect_img_objects()
-		image_proc.update_label()
+		image_proc.update_label(crop_size)
