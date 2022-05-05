@@ -1,6 +1,7 @@
 import cv2 
 import os 
 import time
+from copy import deepcopy
 from rich.progress import track
 from draw_boxes import xyxy2xywh, xywhToxyxy
 
@@ -182,9 +183,25 @@ class ImageProc:
 						xmin, ymin = (int(i) if i > 0 else 0 for i in (box_base[0] - size / 2, box_base[1] - size / 2))	
 						temp = box_base[0] + size / 2, box_base[1] + size / 2
 						xmax, ymax = (int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp))
-						box_base_xyxy = [xmin, ymin, xmax, ymax]
-						
-						box_base_xyxy
+						img_base_xyxy = [xmin, ymin, xmax, ymax]
+						img_coor_bias = img_base_xyxy[0], img_base_xyxy[1] 
+
+						boxes_coor_xyhw_cr = []
+						boxes_coor_xyxy_cr = []
+						for box_coor in deepcopy(boxes_coor_xyhw):
+							box_coor[0] -= img_coor_bias[0]
+							box_coor[1] -= img_coor_bias[1]
+							boxes_coor_xyhw_cr.append(box_coor)
+							box_coor = xywhToxyxy(box_coor)
+							box_coor = [int(i) for i in box_coor]
+							boxes_coor_xyxy_cr.append(box_coor)
+
+							if box_coor[0] <= size and box_coor[1] <= size:
+								cropped_img = img[img_base_xyxy[1]:img_base_xyxy[3], img_base_xyxy[0]:img_base_xyxy[2]]
+								start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
+								boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)								
+						boxes_coor_xyhw_cr  
+
 
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
