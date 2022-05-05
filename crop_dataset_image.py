@@ -1,8 +1,5 @@
 import cv2 
-import torch 
-import numpy
-import PIL
-import tqdm
+from rich.progress import track
 strs = "it's just a test description"
 class crop_image:
 	def __init__():

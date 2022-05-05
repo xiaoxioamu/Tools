@@ -1,10 +1,22 @@
 import os
-from tqdm import tqdm 
+from rich.progress import track
 import cv2 as cv
 
+def xyxy2xywh(box: list) -> list :
+	"""
+	Convert xyxy label style to xywh label style and image size don't normalize to (0, 1)
+
+	Args: 
+		box (list): the object coorindate xmin, ymin, xmax, ymax
+	"""
+
+	x_c = (box[0] + box[2]
+	
 
 def xywh2xyxy(box: list, weight: int, height: int) -> tuple:
 	"""
+	From Normalized xywh (0, 1) label style converts to normal size xyxy style 
+
 	Args:
 		box (list): Object's center point's x coordinate, y coordinate, weight, height
 		weight (int): Image's weight
@@ -37,7 +49,7 @@ def draw_boxes(path: str,
 	with open(path) as f:
 		label_data = f.readlines()
 	
-	for txt in tqdm(label_data):
+	for txt in track(label_data):
 		txt = txt.strip()
 
 		img_dir = os.path.split(txt)[0].replace('labels', 'images')
@@ -73,9 +85,9 @@ def draw_boxes(path: str,
 
 
 if __name__ == "__main__":
-	path_list = ["export/other_less_30_table.txt", 
-				 "export/test_less_30_table.txt",
-				 "export/train_less_30_table.txt"]
+	path_list = ["export/other_over_300_table.txt", 
+				 "export/test_over_300_table.txt",
+				 "export/train_over_300_table.txt"]
 
 	weight, height = 2048, 2048
 	style = "xyxy"
