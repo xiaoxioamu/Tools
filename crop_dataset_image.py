@@ -196,11 +196,12 @@ class ImageProc:
 							box_coor = [int(i) for i in box_coor]
 							boxes_coor_xyxy_cr.append(box_coor)
 
-							if box_coor[0] <= size and box_coor[1] <= size:
+							if box_coor[2] <= size and box_coor[3] <= size:
 								cropped_img = img[img_base_xyxy[1]:img_base_xyxy[3], img_base_xyxy[0]:img_base_xyxy[2]]
 								start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
-								boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)								
-						boxes_coor_xyhw_cr  
+								boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
+								cv2.imwrite("test.jpg", boxed_image)								
+ 
 
 
 				except cv2.error:
