@@ -1,5 +1,6 @@
 import cv2 
 import os 
+import time
 from rich.progress import track
 from draw_boxes import xyxy2xywh, xywhToxyxy
 
@@ -125,18 +126,23 @@ class ImageProc:
 						# 	cropped_img = img[box_coor_xyxy[1]:box_coor_xyxy[3], box_coor_xyxy[0]:box_coor_xyxy[2]]
 						# 	cv2.imwrite("test.jpg", cropped_img)
 						for box_coor in boxes_coor:
-
-
+							time.sleep(0.2)
 							box_coor = [int(i) for i in box_coor]
-							xmin, ymin = box_coor[0] - size / 2, box_coor[1] - size / 2
-							xmax, ymax = box_coor[0] + size / 2, box_coor[1] + size / 2
-							# xmin, ymin = [int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2)]	
-							# temp = box_coor[0] + size / 2, box_coor[1] + size / 2
-							# xmax, ymax = [int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp)]
+							# xmin1, ymin1 = box_coor[0] - size / 2, box_coor[1] - size / 2
+							# xmax1, ymax1 = box_coor[0] + size / 2, box_coor[1] + size / 2
+							# box_coor1 = [int(xmin1), int(ymin1), int(xmax1), int(ymax1)]
 
-							box_coor = [int(xmin), int(ymin), int(xmax), int(ymax)]
-							cropped_img = img[box_coor[1]:box_coor[3], box_coor[0]:box_coor[2]]
-							cv2.imwrite("test.jpg", cropped_img)
+							xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2))	
+							temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+							xmax, ymax = (int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp))
+							box_coor_c = [xmin, ymin, xmax, ymax]
+
+							start_point, end_point = (box_coor_c[0], box_coor_c[1]), (box_coor_c[2], box_coor_c[3])
+							boxed_image = cv2.rectangle(img, start_point, end_point, color=(0, 0, 255), thickness=2)
+
+							# cropped_img = img[box_coor_c[1]:box_coor_c[3], box_coor_c[0]:box_coor_c[2]]
+							cv2.imwrite("test.jpg", boxed_image)
+							# cv2.imwrite("test.jpg", cropped_img)
 				
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
@@ -164,6 +170,30 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
+# For test
+	def detect_img_objects(self) -> None:
+
+		"""
+		Cropped image's object and save to specified directory.
+		"""
+
+		for label_path, _, img_path in self.get_label_img_path():
+			time.sleep(0.4)
+			if os.path.exists(label_path) and os.path.exists(img_path):
+				try:
+					img = cv2.imread(img_path)
+					boxes_coor = self.label2xyxy(label_path)
+					if boxes_coor is not None:
+						for box_coor in boxes_coor:
+							box_coor = [int(i) for i in box_coor]
+							# cropped_img = img[box_coor[1]:box_coor[3], box_coor[0]:box_coor[2]]
+							start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
+							boxed_image = cv2.rectangle(img, start_point, end_point, color=(0, 0, 255), thickness=2)
+							cv2.imwrite("test.jpg", boxed_image)
+				
+				except cv2.error:
+					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
+
 
 if __name__ == "__main__":
 	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
@@ -173,4 +203,5 @@ if __name__ == "__main__":
 	for label_table in label_tables_list:
 		image_proc = ImageProc(label_table, image_shape)
 		# image_proc.crop_img_objects()
-		image_proc.crop_spec_size_img(crop_size)
+		# image_proc.crop_spec_size_img(crop_size)
+		image_proc.detect_img_objects()
