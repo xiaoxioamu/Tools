@@ -17,6 +17,21 @@ def xyxy2xywh(box: list) -> list :
 	return [x_c, y_c, w, h]
 	
 
+def xywh2xyxy(box: list) -> list :
+	"""
+	Convert xyxy label style to xywh label style and image size don't normalize to (0, 1)
+
+	Args: 
+		box (list): the object coorindate object center point (x, y) and weight, height
+	"""
+
+	xmin = (box[0] - 1 / 2 * box[2])
+	ymin = (box[1] - 1 / 2 * box[3])
+	xmax = (box[0] + 1 / 2 * box[2])
+	ymax = (box[1] + 1 / 2 * box[3])
+	return [xmin, ymin, xmax, ymax]
+
+
 def xywh2xyxy(box: list, weight: int, height: int) -> tuple:
 	"""
 	From Normalized xywh (0, 1) label style converts to normal size xyxy style 
