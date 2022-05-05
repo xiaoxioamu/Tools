@@ -10,7 +10,11 @@ def xyxy2xywh(box: list) -> list :
 		box (list): the object coorindate xmin, ymin, xmax, ymax
 	"""
 
-	x_c = (box[0] + box[2]
+	x_c = (box[0] + box[2]) / 2
+	y_c = (box[1] + box[3]) / 2
+	w = (box[2] - box[0])
+	h = (box[3] - box[1])
+	return [x_c, y_c, w, h]
 	
 
 def xywh2xyxy(box: list, weight: int, height: int) -> tuple:
