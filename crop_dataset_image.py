@@ -13,7 +13,7 @@ class ImageProc:
 		style (str): The label coordinate format
 		img_shape (tuple): Image shape (weight, height)
 	"""
-	def __init__(self, img_shape: tuple, label_table: str, style: str="xyxy"):
+	def __init__(self, label_table: str, img_shape: tuple, style: str="xyxy"):
 		self.style = style
 		self.shape = img_shape
 		with open(label_table) as f:
@@ -117,13 +117,22 @@ class ImageProc:
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
+					boxes_coor_xyxy = self.label2xyxy(label_path)
 					boxes_coor = self.label2xywh(label_path)
 					if boxes_coor is not None: 
+						for box_coor_xyxy in boxes_coor_xyxy:
+							box_coor_xyxy = [int(i) for i in box_coor_xyxy]
+							cropped_img = img[box_coor_xyxy[1]:box_coor_xyxy[3], box_coor_xyxy[0]:box_coor_xyxy[2]]
+							cv2.imwrite("test.jpg", cropped_img)
 						for box_coor in boxes_coor:
-							box_coor = [i for i in box_coor]
 
-							xmin, ymin = [int(i) if i > 0 else 0 for i in (box_coor[2] - size / 2, box_coor[3] - size / 2)]	
-							xmax, ymax = [int(i) if i <= size else size for i in (box_coor[2] + size / 2, box_coor[3] + size / 2)]	
+
+							box_coor = [int(i) for i in box_coor]
+
+							xmin, ymin = [int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2)]	
+							temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+							xmax, ymax = [int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp)]
+
 							box_coor = [xmin, ymin, xmax, ymax]
 							cropped_img = img[box_coor[1]:box_coor[3], box_coor[0]:box_coor[2]]
 							cv2.imwrite("test.jpg", cropped_img)
@@ -158,8 +167,9 @@ class ImageProc:
 if __name__ == "__main__":
 	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
 	crop_size = 640
+	image_shape = (2048, 2048)
 	
 	for label_table in label_tables_list:
-		image_proc = ImageProc(label_table)
+		image_proc = ImageProc(label_table, image_shape)
 		# image_proc.crop_img_objects()
 		image_proc.crop_spec_size_img(crop_size)
