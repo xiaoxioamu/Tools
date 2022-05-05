@@ -4,7 +4,7 @@ from rich.progress import track
 from draw_boxes import xyxy2xywh, xywhToxyxy
 
 
-class ImageCrop:
+class ImageProc:
 	"""
 	Crop image to needed size.
 
@@ -81,31 +81,6 @@ class ImageCrop:
 			yield label_path, img_dir, img_path
 
 
-	# def crop_image(self) -> None:
-
-	# 	"""
-	# 	Cropped image's object and save to specified directory.
-	# 	"""
-
-	# 	for label_path in track(self.label_path_list):
-	# 		label_path = label_path.strip() 
-	# 		img_dir = os.path.split(label_path)[0].replace('labels', 'images')
-	# 		img_path = os.path.join(img_dir, os.path.split(label_path)[1].replace('.txt', '.jpg'))
-
-	# 		if os.path.exists(label_path) and os.path.exists(img_path):
-	# 			try:
-	# 				img = cv2.imread(img_path)
-	# 				boxes_coor = self.label2xyxy(label_path)
-	# 				if boxes_coor is not None:
-	# 					for box_coor in boxes_coor:
-	# 						box_coor = [int(i) for i in box_coor]
-	# 						cropped_img = img[box_coor[1]:box_coor[3], box_coor[0]:box_coor[2]]
-	# 						cv2.imwrite("test.jpg", cropped_img)
-				
-	# 			except cv2.error:
-	# 				print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
-
-
 	def crop_image(self) -> None:
 
 		"""
@@ -113,10 +88,6 @@ class ImageCrop:
 		"""
 
 		for label_path, _, img_path in self.get_label_img_path():
-			# label_path = label_path.strip() 
-			# img_dir = os.path.split(label_path)[0].replace('labels', 'images')
-			# img_path = os.path.join(img_dir, os.path.split(label_path)[1].replace('.txt', '.jpg'))
-
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
@@ -131,9 +102,32 @@ class ImageCrop:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
+	def draw_boxes(self) -> None:
+
+		"""
+		Cropped image's object and save to specified directory.
+		"""
+
+		for label_path, _, img_path in self.get_label_img_path():
+			if os.path.exists(label_path) and os.path.exists(img_path):
+				try:
+					img = cv2.imread(img_path)
+					boxes_coor = self.label2xyxy(label_path)
+					if boxes_coor is not None:
+						for box_coor in boxes_coor:
+							box_coor = [int(i) for i in box_coor]
+							start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
+							boxed_image = cv2.rectangle(img, start_point, end_point, color=(0, 0, 255), thickness=2)	
+							cv2.imwrite("test.jpg", boxed_image)	
+
+				except cv2.error:
+					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
+
+
 if __name__ == "__main__":
 	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
 	
 	for label_table in label_tables_list:
-		image_crop = ImageCrop(label_table)
-		image_crop.crop_image()
+		image_proc = ImageProc(label_table)
+		# image_proc.crop_image()
+		image_proc.draw_boxes()
