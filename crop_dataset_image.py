@@ -117,23 +117,24 @@ class ImageProc:
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor_xyxy = self.label2xyxy(label_path)
+					# boxes_coor_xyxy = self.label2xyxy(label_path)
 					boxes_coor = self.label2xywh(label_path)
 					if boxes_coor is not None: 
-						for box_coor_xyxy in boxes_coor_xyxy:
-							box_coor_xyxy = [int(i) for i in box_coor_xyxy]
-							cropped_img = img[box_coor_xyxy[1]:box_coor_xyxy[3], box_coor_xyxy[0]:box_coor_xyxy[2]]
-							cv2.imwrite("test.jpg", cropped_img)
+						# for box_coor_xyxy in boxes_coor_xyxy:
+						# 	box_coor_xyxy = [int(i) for i in box_coor_xyxy]
+						# 	cropped_img = img[box_coor_xyxy[1]:box_coor_xyxy[3], box_coor_xyxy[0]:box_coor_xyxy[2]]
+						# 	cv2.imwrite("test.jpg", cropped_img)
 						for box_coor in boxes_coor:
 
 
 							box_coor = [int(i) for i in box_coor]
+							xmin, ymin = box_coor[0] - size / 2, box_coor[1] - size / 2
+							xmax, ymax = box_coor[0] + size / 2, box_coor[1] + size / 2
+							# xmin, ymin = [int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2)]	
+							# temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+							# xmax, ymax = [int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp)]
 
-							xmin, ymin = [int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2)]	
-							temp = box_coor[0] + size / 2, box_coor[1] + size / 2
-							xmax, ymax = [int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp)]
-
-							box_coor = [xmin, ymin, xmax, ymax]
+							box_coor = [int(xmin), int(ymin), int(xmax), int(ymax)]
 							cropped_img = img[box_coor[1]:box_coor[3], box_coor[0]:box_coor[2]]
 							cv2.imwrite("test.jpg", cropped_img)
 				
@@ -166,7 +167,7 @@ class ImageProc:
 
 if __name__ == "__main__":
 	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
-	crop_size = 640
+	crop_size = 300
 	image_shape = (2048, 2048)
 	
 	for label_table in label_tables_list:
