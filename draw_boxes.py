@@ -17,7 +17,7 @@ def xyxy2xywh(box: list) -> list :
 	return [x_c, y_c, w, h]
 	
 
-def xywh2xyxy(box: list) -> list :
+def xywhToxyxy(box: list) -> list :
 	"""
 	Convert xyxy label style to xywh label style and image size don't normalize to (0, 1)
 

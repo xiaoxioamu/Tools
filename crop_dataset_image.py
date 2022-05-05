@@ -1,7 +1,7 @@
 import cv2 
 import os 
 from rich.progress import track
-from draw_boxes import xyxy2xywh, xywh2xyxy
+from draw_boxes import xyxy2xywh, xywhToxyxy
 
 
 class ImageCrop:
@@ -54,9 +54,10 @@ class ImageCrop:
 				boxes = f.readlines()
 				for box in boxes:
 					box = box.strip().split(' ')
-					box = [float(i) for i in box.pop(0)]
+					box.pop(0)
+					box = [float(i) for i in box]
 					if self.style == "xywh":
-						box = xywh2xyxy(box)
+						box = xywhToxyxy(box)
 
 					boxes_coor.append(box)
 			return boxes_coor 
@@ -72,20 +73,27 @@ class ImageCrop:
 			label_path = label_path.strip() 
 			img_dir = os.path.split(label_path)[0].replace('labels', 'images')
 			img_path = os.path.join(img_dir, os.path.split(label_path)[1].replace('.txt', '.jpg'))	
+			# if os.path.exists(label_path) and os.path.exists(img_path):
+			try:
+				img = cv2.imread(img_path)
+				boxes_coor = self.label2xyxy(label_path)
+				if boxes_coor is not None:
+					for box_coor in boxes_coor:
+						box_coor = [int(i) for i in box_coor]
+						# start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
+						cropped_img = img[box_coor[1]:box_coor[3], box_coor[0]:box_coor[2]]
 
-			img = cv2.imread(img_path)
-			boxes_coor = self.label2xyxy(label_path)
+						# image = cv2.rectangle(img, start_point, end_point, color=(0, 0, 255), thickness=2)
+						# cv2.imshow("image", cropped_img)
+						cv2.imwrite("test.jpg", cropped_img)
+			except cv2.error:
+				print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
-			for box_coor in boxes_coor:
-				box_coor = [int(i) for i in box_coor]
-				cropped_img = img[box_coor[0]:box_coor[2], box_coor[1]:box_coor[3]]
-				cv2.imshow("cropped", cropped_img)
-				cv2.waitKey(0)
 
 
 
 if __name__ == "__main__":
-	label_tables_list = ["labels/test.txt"]
+	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
 	
 	for label_table in label_tables_list:
 		image_crop = ImageCrop(label_table)
