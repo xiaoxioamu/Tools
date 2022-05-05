@@ -9,7 +9,7 @@ while read line; do
 	if [ ${line} ]; then
 		cd ${line}
 		if [ -e .git ]; then 
-			echo "show  -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 -->" ${line}
+			echo "show  -- 🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖 -->" ${line}
 			git log -p -1
 			echo -e "\n"
 		fi; cd ..		
