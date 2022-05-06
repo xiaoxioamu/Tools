@@ -178,20 +178,23 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
-	def label_save(self, label_path: str, value: int) -> str:
+	def label_save(self, label_path: str, img_labels: list, num: int):
 
 		"""
 		Save image to specified path.
 		Args:
 			label_path (str): Input image path
-			value (int): The size of image to crop
+			img_label (list): Image label annotations [[xmin, ymin, xmax, ymax]]
+			num (int): The number of cropped image
 		"""
 
 		label_path_list = label_path.split('/')
 
-		crop_eq_value = f"cropped_" + str(value) 
+		crop_eq_value = f"cropped_" + str(self.size)
+		filename = os.path.splitext(label_path_list[-1]) 
+
 		label_new_dirs = os.path.join(label_path_list[0], crop_eq_value, label_path_list[1]) 
-		label_new_path = os.path.join(label_new_dirs, label_path_list[-1])
+		label_new_path = os.path.join(label_new_dirs, filename[0] + f'_{num}' + filename[1])
 		label_new_path_list = label_new_dirs.split('/')
 
 		temp_dir = ""
@@ -202,25 +205,31 @@ class ImageProc:
 			temp_dir += '/'
 
 		if not os.path.exists(label_new_path):
-			shutil.copyfile(label_path, label_new_path)		
+			with open(label_new_path, 'w') as f:	
+				for label in img_labels:
+					label = str(label).replace('[', '').replace(']', '').replace(',', ' ') + '\n'
+					f.write(label)
 
 
-	def image_save(self, label_path: str, value: int, img: numpy.ndarray) -> str:
+
+	def image_save(self, label_path: str, img: numpy.ndarray, num: int) -> str:
 
 		"""
 		Save image to specified path.
 		Args:
 			label_path (str): Input image path
-			value (int): The size of image to crop
 			img (numpy.ndarary): Image after cv2.imread
+			num (int): The number of cropped image
 		"""
 
 		img_path = label_path.replace("labels", "images").replace(".txt", ".jpg")
 		img_path_list = img_path.split('/')
 
-		crop_eq_value = f"cropped_" + str(value) 
+		crop_eq_value = f"cropped_" + str(self.size) 
+		filename = os.path.splitext(img_path_list[-1])
+
 		img_new_dirs = os.path.join(img_path_list[0], crop_eq_value, img_path_list[1])
-		img_new_path = os.path.join(img_new_dirs, img_path_list[-1])
+		img_new_path = os.path.join(img_new_dirs, filename[0] + f'_{num}' + filename[1])
 		img_new_dirs_list = img_new_dirs.split('/')
 
 		temp_dir = ""
@@ -229,6 +238,7 @@ class ImageProc:
 			if not os.path.exists(temp_dir):
 				os.mkdir(temp_dir)
 			temp_dir += '/'
+
 		if not os.path.exists(img_new_path):
 			cv2.imwrite(img_new_path, img)
 
@@ -287,7 +297,7 @@ class ImageProc:
 		"""
 
 		for label_path, _, img_path in self.get_label_img_path():
-			time.sleep(0.5)
+			# time.sleep(0.5)
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
@@ -300,13 +310,17 @@ class ImageProc:
 						boxes_coor_xyhw.sort(key=lambda x : x[1])
 
 					boxes_coor_xyhw_dc = deepcopy(boxes_coor_xyhw)
+
+					num = 0
 					while boxes_coor_xyhw_dc:
 						img_labels, cropped_img = self.update_label_engine(boxes_coor_xyhw_dc, img)
-
-						# for img_label in img_labels:
-						# 	start_point, end_point = (img_label[1], img_label[2]), (img_label[3], img_label[4])
-						# 	boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
-						# 	cv2.imwrite("test.jpg", boxed_image)	
+						self.label_save(label_path, img_labels, num)
+						self.image_save(label_path, cropped_img, num)
+						num += 1
+						for img_label in img_labels:
+							start_point, end_point = (img_label[1], img_label[2]), (img_label[3], img_label[4])
+							boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
+							cv2.imwrite("test.jpg", boxed_image)	
 
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
@@ -373,13 +387,12 @@ class ImageProc:
 
 
 if __name__ == "__main__":
-	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
+	label_tables_list = ["labels/cropped_640/train.txt", 
+						"labels/cropped_640/test.txt", 
+						"labels/cropped_640/other.txt"]
 	crop_size = 640
 	image_shape = (2048, 2048)
 	
 	for label_table in label_tables_list:
 		image_proc = ImageProc(label_table, image_shape, crop_size)
-		# image_proc.crop_img_objects()
-		# image_proc.crop_spec_size_img(crop_size)
-		# image_proc.detect_img_objects()
-		image_proc.update_label()
+		image_proc.draw_boxes()

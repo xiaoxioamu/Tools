@@ -104,9 +104,9 @@ def draw_boxes(path: str,
 
 
 if __name__ == "__main__":
-	path_list = ["export/other_over_300_table.txt", 
-				 "export/test_over_300_table.txt",
-				 "export/train_over_300_table.txt"]
+	path_list = [ 
+						"labels/cropped_640/test.txt", 
+						"labels/cropped_640/other.txt"]
 
 	weight, height = 2048, 2048
 	style = "xyxy"
