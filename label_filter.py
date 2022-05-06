@@ -224,7 +224,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description="Sort image labels, filter images and labels")
 	parser.add_argument('-p', "--path_list", type=list, default=["labels/train.txt", "labels/test.txt", "labels/other.txt"], help="label table list")
 	parser.add_argument('-l', "--label_export_dir", type=str, default="export", help="Filtered label table exported path")
-	parser.add_argument('-v', "--hw_value", type=int, default=None, help="Threshold value to filter")
+	parser.add_argument('-v', "--hw_value", type=int, default=100, help="Threshold value to filter")
 	parser.add_argument("--over", type=bool, default=True, help="To determine over or less the threshold")
 	parser.add_argument("--img_export", type=bool, default=True, help="If img_export is True, image export")
 	parser.add_argument("--label_comp_export", type=bool, default=True, help="If label_comp_export is true, sorted label information will be export")

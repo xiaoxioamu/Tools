@@ -169,6 +169,14 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
+	def save_image_label(self):
+
+		"""
+		Save images and labels to specified path.
+		"""
+
+		
+
 	def update_label_engine(self, boxes_coor_xyhw: list, img: numpy.ndarray):
 
 		"""
@@ -206,15 +214,6 @@ class ImageProc:
 			start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
 			boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
 			cv2.imwrite("test.jpg", boxed_image)
-
-			# if box_coor[2] <= self.size and box_coor[3] <= self.size:
-			# 	boxes_coor_xyhw.pop(0)
-			# 	cropped_img = deepcopy(img[img_base_xyxy[1]:img_base_xyxy[3], img_base_xyxy[0]:img_base_xyxy[2]])
-			# 	start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
-			# 	boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
-			# 	cv2.imwrite("img.jpg", img)
-			# 	cv2.imwrite("test.jpg", boxed_image)
-
 
 
 	def update_label(self):
@@ -315,6 +314,6 @@ if __name__ == "__main__":
 	for label_table in label_tables_list:
 		image_proc = ImageProc(label_table, image_shape, crop_size)
 		# image_proc.crop_img_objects()
-		image_proc.crop_spec_size_img(crop_size)
-		image_proc.detect_img_objects()
+		# image_proc.crop_spec_size_img(crop_size)
+		# image_proc.detect_img_objects()
 		image_proc.update_label()
