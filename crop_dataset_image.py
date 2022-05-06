@@ -316,5 +316,5 @@ if __name__ == "__main__":
 		image_proc = ImageProc(label_table, image_shape, crop_size)
 		# image_proc.crop_img_objects()
 		# image_proc.crop_spec_size_img(crop_size)
-		# image_proc.detect_img_objects()
+		image_proc.detect_img_objects()
 		image_proc.update_label()
