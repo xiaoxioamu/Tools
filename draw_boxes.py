@@ -104,7 +104,7 @@ def draw_boxes(path: str,
 
 
 if __name__ == "__main__":
-	path_list = [ 
+	path_list = ["labels/cropped_640/train.txt", 
 						"labels/cropped_640/test.txt", 
 						"labels/cropped_640/other.txt"]
 

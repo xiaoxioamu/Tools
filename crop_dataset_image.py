@@ -163,6 +163,7 @@ class ImageProc:
 		"""
 
 		for label_path, _, img_path in self.get_label_img_path():
+			time.sleep(1)
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
@@ -207,7 +208,7 @@ class ImageProc:
 		if not os.path.exists(label_new_path):
 			with open(label_new_path, 'w') as f:	
 				for label in img_labels:
-					label = str(label).replace('[', '').replace(']', '').replace(',', ' ') + '\n'
+					label = str(label).replace('[', '').replace(']', '').replace(', ', ' ') + '\n'
 					f.write(label)
 
 
@@ -387,12 +388,10 @@ class ImageProc:
 
 
 if __name__ == "__main__":
-	label_tables_list = ["labels/cropped_640/train.txt", 
-						"labels/cropped_640/test.txt", 
-						"labels/cropped_640/other.txt"]
+	label_tables_list = ["labels/train.txt", "labels/other.txt", "labels/test.txt"]
 	crop_size = 640
 	image_shape = (2048, 2048)
 	
 	for label_table in label_tables_list:
 		image_proc = ImageProc(label_table, image_shape, crop_size)
-		image_proc.draw_boxes()
+		image_proc.update_label()
