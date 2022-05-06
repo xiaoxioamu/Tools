@@ -29,6 +29,6 @@ done < ${temFile}
 # Commit and push
 if [ $is_change == 1 ]
 then 
-	git commit -m "$*"
+	git commit -m "🦄 $* 🦄"
 	git push
 fi
