@@ -188,6 +188,9 @@ class ImageProc:
 
 		boxes_coor_xyhw_cr = []
 		boxes_coor_xyxy_cr = []
+
+		cropped_img = deepcopy(img[img_base_xyxy[1]:img_base_xyxy[3], img_base_xyxy[0]:img_base_xyxy[2]])
+		
 		for box_coor in deepcopy(boxes_coor_xyhw):
 			box_coor[0] -= img_coor_bias[0]
 			box_coor[1] -= img_coor_bias[1]
@@ -196,12 +199,21 @@ class ImageProc:
 			box_coor = [int(i) for i in box_coor]
 			boxes_coor_xyxy_cr.append(box_coor)
 
-			if box_coor[2] <= self.size and box_coor[3] <= self.size:
-				boxes_coor_xyhw.pop(0)
-				cropped_img = img[img_base_xyxy[1]:img_base_xyxy[3], img_base_xyxy[0]:img_base_xyxy[2]]
-				# start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
-				# boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
-				cv2.imwrite("test.jpg", cropped_img)
+			if box_coor[2] > self.size or box_coor[3] > self.size:
+				return			
+
+			boxes_coor_xyhw.pop(0)
+			start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
+			boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
+			cv2.imwrite("test.jpg", boxed_image)
+
+			# if box_coor[2] <= self.size and box_coor[3] <= self.size:
+			# 	boxes_coor_xyhw.pop(0)
+			# 	cropped_img = deepcopy(img[img_base_xyxy[1]:img_base_xyxy[3], img_base_xyxy[0]:img_base_xyxy[2]])
+			# 	start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
+			# 	boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
+			# 	cv2.imwrite("img.jpg", img)
+			# 	cv2.imwrite("test.jpg", boxed_image)
 
 
 
