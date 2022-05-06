@@ -306,6 +306,7 @@ class ImageProc:
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
+
 if __name__ == "__main__":
 	label_tables_list = ["labels/test.txt", "labels/train.txt", "labels/other.txt"]
 	crop_size = 640
