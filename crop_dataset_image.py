@@ -279,9 +279,6 @@ class ImageProc:
 			if box_coor[3] > self.size or box_coor[4] > self.size:
 				return img_label, cropped_img
 
-			# start_point, end_point = (box_coor[0], box_coor[1]), (box_coor[2], box_coor[3])
-			# boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
-			# cv2.imwrite("test.jpg", boxed_image)
 			boxes_coor_xyhw.pop(0)
 			img_label.append(box_coor)
 
@@ -319,10 +316,10 @@ class ImageProc:
 						self._label_save(label_path, img_labels, num)
 						self._image_save(label_path, cropped_img, num)
 						num += 1
-						for img_label in img_labels:
-							start_point, end_point = (img_label[1], img_label[2]), (img_label[3], img_label[4])
-							boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
-							cv2.imwrite("test.jpg", boxed_image)	
+						# for img_label in img_labels:
+						# 	start_point, end_point = (img_label[1], img_label[2]), (img_label[3], img_label[4])
+						# 	boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
+						# 	cv2.imwrite("test.jpg", boxed_image)	
 
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
@@ -392,12 +389,12 @@ def parser_args():
 	"""
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-l', "--label_tables_list", nargs='+', type=str, default=["labels/train.txt", "labels/other.txt", "labels/test.txt"], help="label tables list")
+	parser.add_argument('-l', "--label_tables_list", nargs='+', type=str, default=["labels/cropped_640/train.txt", "labels/other.txt", "labels/test.txt"], help="label tables list")
 	parser.add_argument('-c', "--crop_size", type=int, default=640, help="crop size for image")
 	parser.add_argument('-i', "--image_shape", type=tuple, default=(2048, 2048), help="The original size of image")
 	parser.add_argument('-t', "--sleep_time", type=float, default=0, help="Sleep time in executation")
 	parser.add_argument("--style", type=str, default="xyxy", help="The format of image's label annotations")	
-	parser.add_argument('-f', "--function", type=str, default='draw_boxes', help="Called function name")
+	parser.add_argument('-f', "--function", type=str, default='update_label', help="Called function name")
 	args = parser.parse_args()
 
 	return args
