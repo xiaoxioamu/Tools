@@ -31,7 +31,7 @@ while read line; do
 			done < ${temFile}
 
 			# Commit and push
-			if [ $is_change == 1 && $* ]
+			if [[ $is_change == 1 && -n $* ]]
 			echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
 			git pull			
 			then 
