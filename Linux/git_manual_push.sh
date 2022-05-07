@@ -34,8 +34,11 @@ while read line; do
 			if [ $is_change == 1 ]
 			echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
 			then 
+				git pull
 				git commit -m "🦄 $* 🦄"
 				git push 
+			else
+
 			fi
 			echo -e "\n"
 		fi; cd ..
