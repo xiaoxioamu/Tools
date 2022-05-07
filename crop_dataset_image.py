@@ -388,10 +388,11 @@ class ImageProc:
 
 
 if __name__ == "__main__":
-	label_tables_list = ["labels/train.txt", "labels/other.txt", "labels/test.txt"]
+	label_tables_list = ["labels/cropped_640/train.txt", "labels/other.txt", "labels/test.txt"]
 	crop_size = 640
 	image_shape = (2048, 2048)
 	
 	for label_table in label_tables_list:
 		image_proc = ImageProc(label_table, image_shape, crop_size)
-		image_proc.update_label()
+		# image_proc.update_label()
+		image_proc.draw_boxes()
