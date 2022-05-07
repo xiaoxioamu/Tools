@@ -104,9 +104,9 @@ def draw_boxes(path: str,
 
 
 if __name__ == "__main__":
-	path_list = ["labels/cropped_640/train.txt", 
-						"labels/cropped_640/test.txt", 
-						"labels/cropped_640/other.txt"]
+	path_list = ["labels/train.txt", 
+						"labels/test.txt", 
+						"labels/other.txt"]
 
 	width, height = 2048, 2048
 	style = "xyxy"
