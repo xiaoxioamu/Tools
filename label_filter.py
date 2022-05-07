@@ -4,7 +4,7 @@ import shutil
 
 def calculate_image_size(path: str) -> list : 
 	"""
-	Calculcate the image's height, weight, area and label's table.
+	Calculcate the image's height, width, area and label's table.
 
 	Args:
 		path (str): Label table path
@@ -107,7 +107,7 @@ def export_labels_comp(key: str, label_inf: list, value: int, file: str=None) ->
 def export_labels_inf_over_num(label_inf: list, value: int, file: str=None) -> list:
 
 	"""
-	Filter the label's weight or height over value. Sorted filtered label information.
+	Filter the label's width or height over value. Sorted filtered label information.
 		If file is not None, export sorted label information to file.
 
 	Args:
@@ -132,7 +132,7 @@ def export_labels_inf_over_num(label_inf: list, value: int, file: str=None) -> l
 def export_labels_inf_less_num(label_inf: list, value: int, file: str=None) -> list : 
 
 	"""
-	Filter the label's weight or height less value. Sorted filtered label information .
+	Filter the label's width or height less value. Sorted filtered label information .
 		If file is not None, export sorted label information to file.
 
 	Args:
@@ -185,7 +185,7 @@ def multi_export(
 	Args:
 		path_list (list): label path list
 		label_export_dir (str): label information file after filter
-		hw_value (int): bounding box weight or height threshold
+		hw_value (int): bounding box width or height threshold
 		over (bool): if over==True, the condition is over the hw_value, 
 			if over==False, the condition is less the hw_value
 		img_export (bool): if bool==True, export filtered image to specified folder

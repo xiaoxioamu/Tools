@@ -2,7 +2,7 @@ import cv2
 import os 
 import time
 import numpy
-import shutil
+import argparse
 from copy import deepcopy
 from rich.progress import track
 from draw_boxes import xyxy2xywh, xywhToxyxy
@@ -17,24 +17,27 @@ class ImageProc:
 		label_table (str): Label table
 		style (str): The label coordinate format
 		size (int): Size of cropped image
-		img_shape (tuple): Image shape (weight, height)
+		sleep_time (float): Sleep time in executation
+		img_shape (tuple): Image shape (width, height)
 	"""
 
 	def __init__(self, 
 				label_table: str, 
 				img_shape: tuple, 
 				size: int,
+				sleep_time: float,
 				style: str="xyxy", 
 				):
 
 		self.style = style
+		self.time = sleep_time
 		self.shape = img_shape
 		self.size = size 
 		with open(label_table) as f:
 			self.label_path_list = f.readlines()
 		
 	
-	def label2xywh(self, label_path) -> list :
+	def _label2xywh(self, label_path) -> list :
 
 		"""
 		Convert label txt annotations' coordinate to xywh and output image bounding box coordinates.
@@ -59,7 +62,7 @@ class ImageProc:
 			return boxes_coor 
 
 
-	def label2xyxy(self, label_path: str) -> list :
+	def _label2xyxy(self, label_path: str) -> list :
 
 		"""
 		Convert label txt annotations' coordinate to xywh and output image bounding box coordinates.
@@ -91,7 +94,7 @@ class ImageProc:
 		return len(self.label_path_list)
 
 
-	def get_label_img_path(self) -> tuple :
+	def _get_label_img_path(self) -> tuple :
 
 		"""
 		From label table iterat input label and image path.
@@ -111,11 +114,11 @@ class ImageProc:
 		Cropped image's object and save to specified directory.
 		"""
 
-		for label_path, _, img_path in self.get_label_img_path():
+		for label_path, _, img_path in self._get_label_img_path():
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor = self.label2xyxy(label_path)
+					boxes_coor = self._label2xyxy(label_path)
 					if boxes_coor is not None:
 						for box_coor in boxes_coor:
 							box_coor = [int(i) for i in box_coor[1:]]
@@ -126,26 +129,24 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
-	def crop_spec_size_img(self, size: int) -> None:
+	def crop_spec_size_img(self) -> None:
 
 		"""
 		Crop image's object and save to specified directory.
 		
-		Args:
-			size (int): Specify the image size to crop
 		"""
 
-		for label_path, _, img_path in self.get_label_img_path():
+		for label_path, _, img_path in self._get_label_img_path():
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor = self.label2xywh(label_path)
+					boxes_coor = self._label2xywh(label_path)
 					if boxes_coor is not None: 
 						for box_coor in boxes_coor:
 							box_coor = [int(i) for i in box_coor[1:]]
 
-							xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2))	
-							temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+							xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - self.size / 2, box_coor[1] - self.size / 2))	
+							temp = box_coor[0] + self.size / 2, box_coor[1] + self.size / 2
 							xmax, ymax = (int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp))
 							box_coor_c = [xmin, ymin, xmax, ymax]
 
@@ -162,12 +163,12 @@ class ImageProc:
 		Cropped image's object and save to specified directory.
 		"""
 
-		for label_path, _, img_path in self.get_label_img_path():
-			time.sleep(1)
+		for label_path, _, img_path in self._get_label_img_path():
+			time.sleep(self.time)
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor = self.label2xyxy(label_path)
+					boxes_coor = self._label2xyxy(label_path)
 					if boxes_coor is not None:
 						for box_coor in boxes_coor:
 							box_coor = [int(i) for i in box_coor[1:]]
@@ -179,7 +180,7 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
-	def label_save(self, label_path: str, img_labels: list, num: int):
+	def _label_save(self, label_path: str, img_labels: list, num: int):
 
 		"""
 		Save image to specified path.
@@ -213,7 +214,7 @@ class ImageProc:
 
 
 
-	def image_save(self, label_path: str, img: numpy.ndarray, num: int) -> str:
+	def _image_save(self, label_path: str, img: numpy.ndarray, num: int) -> str:
 
 		"""
 		Save image to specified path.
@@ -244,7 +245,7 @@ class ImageProc:
 			cv2.imwrite(img_new_path, img)
 
 
-	def update_label_engine(self, boxes_coor_xyhw: list, img: numpy.ndarray) -> tuple :
+	def _update_label_engine(self, boxes_coor_xyhw: list, img: numpy.ndarray) -> tuple :
 
 		"""
 		Update label engine, calculate label iteratively.
@@ -297,12 +298,12 @@ class ImageProc:
 			size (int): Specify the image size to crop			
 		"""
 
-		for label_path, _, img_path in self.get_label_img_path():
-			# time.sleep(0.5)
+		for label_path, _, img_path in self._get_label_img_path():
+			time.sleep(self.time)
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor = self.label2xywh(label_path)
+					boxes_coor = self._label2xywh(label_path)
 					boxes_coor_xyhw = []
 					if boxes_coor is not None: 
 						for box_coor in boxes_coor:
@@ -314,9 +315,9 @@ class ImageProc:
 
 					num = 0
 					while boxes_coor_xyhw_dc:
-						img_labels, cropped_img = self.update_label_engine(boxes_coor_xyhw_dc, img)
-						self.label_save(label_path, img_labels, num)
-						self.image_save(label_path, cropped_img, num)
+						img_labels, cropped_img = self._update_label_engine(boxes_coor_xyhw_dc, img)
+						self._label_save(label_path, img_labels, num)
+						self._image_save(label_path, cropped_img, num)
 						num += 1
 						for img_label in img_labels:
 							start_point, end_point = (img_label[1], img_label[2]), (img_label[3], img_label[4])
@@ -331,15 +332,15 @@ class ImageProc:
 	def detect_img_objects(self) -> None:
 
 		"""
-		Cropped image's object and save to specified directory.
+		Detect image object's location on original image.
 		"""
 
-		for label_path, _, img_path in self.get_label_img_path():
-			time.sleep(0.5)
+		for label_path, _, img_path in self._get_label_img_path():
+			time.sleep(self.time)
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor = self.label2xyxy(label_path)
+					boxes_coor = self._label2xyxy(label_path)
 					if boxes_coor is not None:
 						for box_coor in boxes_coor:
 							box_coor = [int(i) for i in box_coor[1:]]
@@ -352,28 +353,24 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
-	def detect_spec_size_img(self, size: int) -> None:
+	def detect_spec_size_img(self) -> None:
 
 		"""
-		Crop image's object and save to specified directory.
-		
-		Args:
-			size (int): Specify the image size to crop
+		Detect Cropped image's location on original image.
 		"""
 
-		for label_path, _, img_path in self.get_label_img_path():
-			time.sleep(0.2)
+		for label_path, _, img_path in self._get_label_img_path():
+			time.sleep(self.time)
 			if os.path.exists(label_path) and os.path.exists(img_path):
 				try:
 					img = cv2.imread(img_path)
-					boxes_coor = self.label2xywh(label_path[1:])
+					boxes_coor = self._label2xywh(label_path[1:])
 					if boxes_coor is not None: 
 						for box_coor in boxes_coor:
-							time.sleep(0.2)
 							box_coor = [int(i) for i in box_coor]
 
-							xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - size / 2, box_coor[1] - size / 2))	
-							temp = box_coor[0] + size / 2, box_coor[1] + size / 2
+							xmin, ymin = (int(i) if i > 0 else 0 for i in (box_coor[0] - self.size / 2, box_coor[1] - self.size / 2))	
+							temp = box_coor[0] + self.size / 2, box_coor[1] + self.size / 2
 							xmax, ymax = (int(j) if j <= self.shape[i] else self.shape[i] for i, j in enumerate(temp))
 							box_coor_c = [xmin, ymin, xmax, ymax]
 
@@ -387,12 +384,37 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
+
+def parser_args():
+
+	"""
+	Parser main function arguments.
+	"""
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-l', "--label_tables_list", nargs='+', type=str, default=["labels/train.txt", "labels/other.txt", "labels/test.txt"], help="label tables list")
+	parser.add_argument('-c', "--crop_size", type=int, default=640, help="crop size for image")
+	parser.add_argument('-i', "--image_shape", type=tuple, default=(2048, 2048), help="The original size of image")
+	parser.add_argument('-t', "--sleep_time", type=float, default=0, help="Sleep time in executation")
+	parser.add_argument("--style", type=str, default="xyxy", help="The format of image's label annotations")	
+	parser.add_argument('-f', "--function", type=str, default='draw_boxes', help="Called function name")
+	args = parser.parse_args()
+
+	return args
+
+
+def runs():
+	args = parser_args()
+	for label_table in args.label_tables_list:
+		image_proc = ImageProc(label_table, 
+								args.image_shape, 
+								args.crop_size, 
+								args.sleep_time,
+								args.style,
+								)
+		getattr(image_proc, args.function)()
+
+
 if __name__ == "__main__":
-	label_tables_list = ["labels/cropped_640/train.txt", "labels/other.txt", "labels/test.txt"]
-	crop_size = 640
-	image_shape = (2048, 2048)
+	runs()
 	
-	for label_table in label_tables_list:
-		image_proc = ImageProc(label_table, image_shape, crop_size)
-		# image_proc.update_label()
-		image_proc.draw_boxes()
