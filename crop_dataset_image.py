@@ -213,7 +213,6 @@ class ImageProc:
 					f.write(label)
 
 
-
 	def _image_save(self, label_path: str, img: numpy.ndarray, num: int) -> str:
 
 		"""
