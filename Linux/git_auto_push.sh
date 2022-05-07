@@ -31,15 +31,19 @@ while read line; do
 			done < ${temFile}
 
 			# Commit and push
-			if [[ $is_change == 1 && -n $* ]]
-			echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
-			git pull			
-			then 
-				git commit -m "🐬 update: $(date +"%Y-%m-%d-%H:%M:%S") 🐬"
-			else
+			if [[ $is_change == 1 && -n $* ]]; then 
+				echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
+				git pull
 				git commit -m "🦄 $* 🦄" 
+				git push
+				
+			elif [[ $is_change == 1 && -z $* ]]; then
+				echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
+				git pull
+				git commit -m "🐬 update: $(date +"%Y-%m-%d-%H:%M:%S") 🐬"
+				git push
 			fi
-			git push
+			
 			echo -e "\n"
 		fi; cd ..
 	fi 

@@ -37,8 +37,6 @@ while read line; do
 				git pull
 				git commit -m "🦄 $* 🦄"
 				git push 
-			else
-
 			fi
 			echo -e "\n"
 		fi; cd ..
