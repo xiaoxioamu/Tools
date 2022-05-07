@@ -1,3 +1,4 @@
+import re
 import cv2 
 import os 
 import time
@@ -15,10 +16,11 @@ class ImageProc:
 
 	Args:
 		label_table (str): Label table
-		style (str): The label coordinate format
+		img_shape (tuple): Image shape (width, height)
 		size (int): Size of cropped image
 		sleep_time (float): Sleep time in executation
-		img_shape (tuple): Image shape (width, height)
+		proc_name (str): Image process name
+		style (str): The label coordinate format		
 	"""
 
 	def __init__(self, 
@@ -26,6 +28,7 @@ class ImageProc:
 				img_shape: tuple, 
 				size: int,
 				sleep_time: float,
+				proc_name: str,
 				style: str="xyxy", 
 				):
 
@@ -33,6 +36,7 @@ class ImageProc:
 		self.time = sleep_time
 		self.shape = img_shape
 		self.size = size 
+		self.proc_name = proc_name
 		with open(label_table) as f:
 			self.label_path_list = f.readlines()
 		
@@ -192,7 +196,7 @@ class ImageProc:
 
 		label_path_list = label_path.split('/')
 
-		crop_eq_value = f"cropped_" + str(self.size)
+		crop_eq_value = f"{self.proc_name}_" + str(self.size)
 		filename = os.path.splitext(label_path_list[-1]) 
 
 		label_new_dirs = os.path.join(label_path_list[0], crop_eq_value, label_path_list[1]) 
@@ -226,11 +230,13 @@ class ImageProc:
 		img_path = label_path.replace("labels", "images").replace(".txt", ".jpg")
 		img_path_list = img_path.split('/')
 
-		crop_eq_value = f"cropped_" + str(self.size) 
-		filename = os.path.splitext(img_path_list[-1])
+		crop_eq_value = f"{self.proc_name}_" + str(self.size) 
+		# filename = os.path.splitext(img_path_list[-1])
 
-		img_new_dirs = os.path.join(img_path_list[0], crop_eq_value, img_path_list[1])
-		img_new_path = os.path.join(img_new_dirs, filename[0] + f'_{num}' + filename[1])
+		# img_new_dirs = os.path.join(img_path_list[0], img_path), crop_eq_value, img_path_list[1])
+		img_new_dirs = os.path.join(re.findall('^\w*/', img_path), crop_eq_value, re.findall('(?<=/)\w*', img_path)[:-1])
+		# img_new_path = os.path.join(img_new_dirs, filename[0] + f'_{num}' + filename[1])
+		img_new_path = os.path.join(img_new_dirs, re.findall("\.\w*"))
 		img_new_dirs_list = img_new_dirs.split('/')
 
 		temp_dir = ""
@@ -392,6 +398,7 @@ def parser_args():
 	parser.add_argument('-c', "--crop_size", type=int, default=640, help="crop size for image")
 	parser.add_argument('-i', "--image_shape", type=tuple, default=(2048, 2048), help="The original size of image")
 	parser.add_argument('-t', "--sleep_time", type=float, default=0, help="Sleep time in executation")
+	parser.add_argument('-p', "--proc_name", type=str, default=None, help="Image process name")
 	parser.add_argument("--style", type=str, default="xyxy", help="The format of image's label annotations")	
 	parser.add_argument('-f', "--function", type=str, default='update_label', help="Called function name")
 	args = parser.parse_args()
@@ -406,6 +413,7 @@ def runs():
 								args.image_shape, 
 								args.crop_size, 
 								args.sleep_time,
+								args.proc_name, 
 								args.style,
 								)
 		getattr(image_proc, args.function)()
