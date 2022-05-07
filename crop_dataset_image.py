@@ -184,40 +184,32 @@ class ImageProc:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
 
 
-	def _label_save(self, label_path: str, img_labels: list, num: int):
+	def _label_save(self, label_path: str, img_labels: list):
 
 		"""
 		Save image to specified path.
 		Args:
 			label_path (str): Input image path
 			img_label (list): Image label annotations [[xmin, ymin, xmax, ymax]]
-			num (int): The number of cropped image
 		"""
-
-		label_path_list = label_path.split('/')
-
-		crop_eq_value = f"{self.proc_name}_" + str(self.size)
-		filename = os.path.splitext(label_path_list[-1]) 
-
-		label_new_dirs = os.path.join(label_path_list[0], crop_eq_value, label_path_list[1]) 
-		label_new_path = os.path.join(label_new_dirs, filename[0] + f'_{num}' + filename[1])
-		label_new_path_list = label_new_dirs.split('/')
+		label_dir = os.path.split(label_path)[0]
+		label_dir_list = label_dir.split('/')
 
 		temp_dir = ""
-		for i in label_new_path_list:
+		for i in label_dir_list:
 			temp_dir += i
 			if not os.path.exists(temp_dir):
 				os.mkdir(temp_dir)
 			temp_dir += '/'
 
-		if not os.path.exists(label_new_path):
-			with open(label_new_path, 'w') as f:	
+		if not os.path.exists(label_path):
+			with open(label_path, 'w') as f:	
 				for label in img_labels:
 					label = str(label).replace('[', '').replace(']', '').replace(', ', ' ') + '\n'
 					f.write(label)
 
 
-	def _image_save(self, label_path: str, img: numpy.ndarray, num: int) -> str:
+	def _image_save(self, img_path: str, img: numpy.ndarray) -> str:
 
 		"""
 		Save image to specified path.
@@ -227,27 +219,38 @@ class ImageProc:
 			num (int): The number of cropped image
 		"""
 
-		img_path = label_path.replace("labels", "images").replace(".txt", ".jpg")
-		img_path_list = img_path.split('/')
+		img_dir = os.path.split(img_path)[0]
 
-		crop_eq_value = f"{self.proc_name}_" + str(self.size) 
-		# filename = os.path.splitext(img_path_list[-1])
-
-		# img_new_dirs = os.path.join(img_path_list[0], img_path), crop_eq_value, img_path_list[1])
-		img_new_dirs = os.path.join(re.findall('^\w*/', img_path), crop_eq_value, re.findall('(?<=/)\w*', img_path)[:-1])
-		# img_new_path = os.path.join(img_new_dirs, filename[0] + f'_{num}' + filename[1])
-		img_new_path = os.path.join(img_new_dirs, re.findall("\.\w*"))
-		img_new_dirs_list = img_new_dirs.split('/')
+		img_dir_list = img_dir.split('/')
 
 		temp_dir = ""
-		for i in img_new_dirs_list:
+		for i in img_dir_list:
 			temp_dir += i
 			if not os.path.exists(temp_dir):
 				os.mkdir(temp_dir)
 			temp_dir += '/'
 
-		if not os.path.exists(img_new_path):
-			cv2.imwrite(img_new_path, img)
+		if not os.path.exists(img_path):
+			cv2.imwrite(img_path, img)
+
+
+	def _image_label_new_path(self, label_path: str) -> tuple :
+
+		"""
+		According to label path, get new image and label path.
+
+		Args:
+			label_path (str): Label path
+		"""
+
+		img_path = label_path.replace("labels", "images").replace(".txt", ".jpg")
+		new_dir = f"{self.proc_name}_" + str(self.size) + '/'
+		index = re.search('/', img_path).span()[1]
+
+		img_new_path = img_path[:index] + new_dir + img_path[index:]
+		label_new_path = label_path[:index] + new_dir + label_path[index:]
+
+		return img_new_path, label_new_path
 
 
 	def _update_label_engine(self, boxes_coor_xyhw: list, img: numpy.ndarray) -> tuple :
@@ -267,9 +270,6 @@ class ImageProc:
 		img_base_xyxy = [box_base[0], xmin, ymin, xmax, ymax]
 		img_coor_bias = img_base_xyxy[1], img_base_xyxy[2] 
 
-		# boxes_coor_xyhw_cr = []
-		# boxes_coor_xyxy_cr = []
-
 		cropped_img = deepcopy(img[img_base_xyxy[2]:img_base_xyxy[4], img_base_xyxy[1]:img_base_xyxy[3]])
 		
 		img_label = []
@@ -277,7 +277,6 @@ class ImageProc:
 
 			box_coor[1] -= img_coor_bias[0]
 			box_coor[2] -= img_coor_bias[1]
-			# boxes_coor_xyhw_cr.append(box_coor)
 			box_coor[1:] = xywhToxyxy(box_coor[1:])
 			box_coor = [int(i) if not isinstance(i, str) else i for i in box_coor]
 
@@ -318,13 +317,16 @@ class ImageProc:
 					num = 0
 					while boxes_coor_xyhw_dc:
 						img_labels, cropped_img = self._update_label_engine(boxes_coor_xyhw_dc, img)
-						self._label_save(label_path, img_labels, num)
-						self._image_save(label_path, cropped_img, num)
+
+						img_ext = os.path.splitext(img_path)[1]
+						label_ext = os.path.splitext(label_path)[1]
+						img_new_path, label_new_path = self._image_label_new_path(label_path)
+						img_new_path = re.findall('.*\.',img_new_path)[0][:-1] + '_' + str(num) + img_ext  
+						label_new_path = re.findall('.*\.', label_new_path)[0][:-1] + '_' + str(num) + label_ext
+					
+						self._label_save(label_new_path, img_labels)
+						self._image_save(img_new_path, cropped_img)
 						num += 1
-						# for img_label in img_labels:
-						# 	start_point, end_point = (img_label[1], img_label[2]), (img_label[3], img_label[4])
-						# 	boxed_image = cv2.rectangle(cropped_img, start_point, end_point, color=(0, 0, 255), thickness=2)
-						# 	cv2.imwrite("test.jpg", boxed_image)	
 
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
@@ -380,7 +382,6 @@ class ImageProc:
 							boxed_image = cv2.rectangle(img, start_point, end_point, color=(0, 0, 255), thickness=2)
 
 							cv2.imwrite("test.jpg", boxed_image)
-
 				
 				except cv2.error:
 					print(f"✈️✈️✈️✈️ cv2.error ✈️✈️✈️✈️	\nlabel_path: {label_path}\nimage_path: {img_path}\n")
@@ -398,7 +399,7 @@ def parser_args():
 	parser.add_argument('-c', "--crop_size", type=int, default=640, help="crop size for image")
 	parser.add_argument('-i', "--image_shape", type=tuple, default=(2048, 2048), help="The original size of image")
 	parser.add_argument('-t', "--sleep_time", type=float, default=0, help="Sleep time in executation")
-	parser.add_argument('-p', "--proc_name", type=str, default=None, help="Image process name")
+	# parser.add_argument('-p', "--proc_name", type=str, default=None, help="Image process name")
 	parser.add_argument("--style", type=str, default="xyxy", help="The format of image's label annotations")	
 	parser.add_argument('-f', "--function", type=str, default='update_label', help="Called function name")
 	args = parser.parse_args()
