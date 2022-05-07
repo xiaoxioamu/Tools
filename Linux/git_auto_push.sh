@@ -34,6 +34,7 @@ while read line; do
 			if [ $is_change == 1 ]
 			echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
 			then 
+				git pull
 				git commit -m "🐬 update: $(date +"%Y-%m-%d-%H:%M:%S") 🐬"
 				git push 
 			fi
