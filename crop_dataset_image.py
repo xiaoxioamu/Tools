@@ -395,13 +395,13 @@ def parser_args():
 	"""
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-l', "--label_tables_list", nargs='+', type=str, default=["labels/cropped_640/train.txt", "labels/other.txt", "labels/test.txt"], help="label tables list")
+	parser.add_argument('-l', "--label_tables_list", nargs='+', type=str, default=["labels/resize_640/cropped_640/train.txt"], help="label tables list")
 	parser.add_argument('-c', "--crop_size", type=int, default=640, help="crop size for image")
 	parser.add_argument('-i', "--image_shape", type=tuple, default=(2048, 2048), help="The original size of image")
 	parser.add_argument('-t', "--sleep_time", type=float, default=0, help="Sleep time in executation")
-	# parser.add_argument('-p', "--proc_name", type=str, default=None, help="Image process name")
+	parser.add_argument('-p', "--proc_name", type=str, default=None, help="Image process name")
 	parser.add_argument("--style", type=str, default="xyxy", help="The format of image's label annotations")	
-	parser.add_argument('-f', "--function", type=str, default='update_label', help="Called function name")
+	parser.add_argument('-f', "--function", type=str, default='draw_boxes', help="Called function name")
 	args = parser.parse_args()
 
 	return args
