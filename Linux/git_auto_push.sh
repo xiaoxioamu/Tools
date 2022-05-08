@@ -41,7 +41,7 @@ while read line; do
 				echo "starting commit -- 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 --> "${line} 
 				git pull
 				git commit -m "🐬 update: $(date +"%Y-%m-%d-%H:%M:%S") 🐬"
-				git push
+				git push origin dev
 			fi
 			
 			echo -e "\n"
