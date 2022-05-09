@@ -6,7 +6,7 @@ import numpy
 import argparse
 from copy import deepcopy
 from rich.progress import track
-from draw_boxes import xyxy2xywh, xywhToxyxy
+from .draw_boxes import xyxy2xywh, xywhToxyxy
 
 
 class ImageProc:
@@ -93,6 +93,41 @@ class ImageProc:
 					boxes_coor.append(box)
 			return boxes_coor 
 
+
+	def xyxy2yolo(self, box: list) -> tuple :
+
+		"""
+		From normal size xyxy style converts to normalized xywh (0, 1) label style 
+
+		Args:
+			box (list): [xmin, ymin, xmax, ymax]
+			width (int): Image's width
+			height (int): Image's height 
+		"""
+
+		w = (float(box[3]) - float(box[1])) / self.shape[0]
+		h = (float(box[4]) - float(box[2])) / self.shape[1]
+		x_c = float(box[1]) / self.shape[0] + 1 / 2 * w
+		y_c = float(box[2]) / self.shape[0] + 1 / 2 * h  
+
+		return [box[0], x_c, y_c, w, h]
+
+	def yolo2xyxy(self, box: list) -> tuple:
+		"""
+		From Normalized xywh (0, 1) label style converts to normal size xyxy style 
+
+		Args:
+			box (list): Object's center point's x coordinate, y coordinate, width, height
+			width (int): Image's width
+			height (int): Image's height 
+		"""
+
+		xmin = (float(box[1]) - 1 / 2 * float(box[3])) * self.shape[0]
+		ymin = (float(box[1]) + 1 / 2 * float(box[3])) * self.shape[0]
+		xmax = (float(box[2]) - 1 / 2 * float(box[4])) * self.shape[1]
+		ymax = (float(box[2]) + 1 / 2 * float(box[4])) * self.shape[1]
+
+		return [box[0], xmin, ymin, xmax, ymax]
 
 	def __len__(self):
 		return len(self.label_path_list)
@@ -205,7 +240,8 @@ class ImageProc:
 		if not os.path.exists(label_path):
 			with open(label_path, 'w') as f:	
 				for label in img_labels:
-					label = str(label).replace('[', '').replace(']', '').replace(', ', ' ') + '\n'
+					# label = str(label).replace('[', '').replace(']', '').replace(', ', ' ') + '\n'
+					label = re.sub("[\[|\]|,|']",'', str(label)) + '\n'
 					f.write(label)
 
 

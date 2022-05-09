@@ -2,7 +2,7 @@ import re
 import cv2 
 import imgaug.augmenters as iaa
 import imgaug as ia
-from crop_dataset_image import ImageProc
+from .crop_dataset_image import ImageProc
 
 
 class ResizeImage(ImageProc):
@@ -30,7 +30,7 @@ class ResizeImage(ImageProc):
 					box_coor_aug = seq_det.augment_bounding_boxes(box_coor)[0]
 					img_aug = seq_det.augment_image(img)
 
-					label = re.findall('\w*', box_coor_aug.label)[1]
+					label = re.findall('\w*', box_coor_aug.label)[0]
 					xmin = box_coor_aug.x1
 					ymin = box_coor_aug.y1 
 					xmax = box_coor_aug.x2 

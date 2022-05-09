@@ -50,6 +50,25 @@ def xywh2xyxy(box: list, width: int, height: int) -> tuple:
 	return xmin, ymin, xmax, ymax 
 
 
+def xyxy2nor_xywh(box: list, width: int, height: int) -> tuple :
+
+	"""
+	From normal size xyxy style converts to normalized xywh (0, 1) label style 
+
+	Args:
+		box (list): [xmin, ymin, xmax, ymax]
+		width (int): Image's width
+		height (int): Image's height 
+	"""
+
+	w = (float(box[3]) - float(box[1])) / width 
+	h = (float(box[4]) - float(box[2])) / height 
+	x = float(box[1]) / width + 1 / 2 * w
+	y = float(box[2]) / height + 1 / 2 * h  
+
+	return x, y, w, h 
+
+
 def draw_boxes(path: str, 
 				width: int, 
 				height: int, 
