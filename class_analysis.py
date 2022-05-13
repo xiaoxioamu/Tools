@@ -1,7 +1,6 @@
 # Analysis dataset class information. Find the number of object over specified 
 # value and export labels over this value
 
-import os
 import shutil
 from rich.progress import track
 from ImageProcess.utils import *
