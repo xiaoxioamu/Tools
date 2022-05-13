@@ -108,7 +108,7 @@ class ImageProc:
 		w = (float(box[3]) - float(box[1])) / self.shape[0]
 		h = (float(box[4]) - float(box[2])) / self.shape[1]
 		x_c = float(box[1]) / self.shape[0] + 1 / 2 * w
-		y_c = float(box[2]) / self.shape[0] + 1 / 2 * h  
+		y_c = float(box[2]) / self.shape[1] + 1 / 2 * h  
 
 		return [box[0], x_c, y_c, w, h]
 
@@ -123,11 +123,12 @@ class ImageProc:
 		"""
 
 		xmin = (float(box[1]) - 1 / 2 * float(box[3])) * self.shape[0]
-		ymin = (float(box[1]) + 1 / 2 * float(box[3])) * self.shape[0]
-		xmax = (float(box[2]) - 1 / 2 * float(box[4])) * self.shape[1]
+		ymin = (float(box[2]) - 1 / 2 * float(box[4])) * self.shape[1]
+		xmax = (float(box[1]) + 1 / 2 * float(box[3])) * self.shape[0]
 		ymax = (float(box[2]) + 1 / 2 * float(box[4])) * self.shape[1]
 
 		return [box[0], xmin, ymin, xmax, ymax]
+
 
 	def __len__(self):
 		return len(self.label_path_list)

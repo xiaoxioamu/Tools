@@ -67,29 +67,17 @@ def run_reshape():
 
 
 def draw_boxes():
-	label_tables_list_ori = ["labels/original/train.txt", 
-						"labels/original/test.txt", 
-						"labels/original/other.txt"]
+	label_tables_list = ["xyxy_640/train.txt", 
+						"xyxy_640/test.txt", 
+						"xyxy_640/val.txt"]
 
-	label_tables_list_crop = ["labels/crop_640/original/train.txt", 
-						"labels/crop_640/original/test.txt", 
-						"labels/crop_640/original/other.txt"]
-
-	label_tables_list_resize = ["labels/resize_640/crop_640/original/train.txt", 
-						"labels/resize_640/crop_640/original/test.txt", 
-						"labels/resize_640/crop_640/original/other.txt"]
-	
-	label_tables_list_resize_yolo_xxyy = ["labels/xyxy_640/yolo_640/crop_640/original/train.txt", 
-										"labels/xyxy_640/yolo_640/crop_640/original/test.txt", 
-										"labels/xyxy_640/yolo_640/crop_640/original/other.txt"]
-
-	img_shape = (2048, 2048)
+	img_shape = (640, 640)
 	crop_size = 640
-	sleep_time = 0.3
+	sleep_time = 0.1
 	style = "xyxy"
 	proc_name = "crop"
 
-	for label_table in label_tables_list_resize_yolo_xxyy:
+	for label_table in label_tables_list:
 		image_proc = ImageProc(label_table, 
 								img_shape, 
 								crop_size, 
@@ -101,9 +89,10 @@ def draw_boxes():
 
 
 def label2yolo():
-	label_tables_list = ["labels/crop_640/original/train.txt", 
-						"labels/crop_640/original/test.txt", 
-						"labels/crop_640/original/other.txt"]
+	label_tables_list = ["xyxy_640/train.txt", 
+						"xyxy_640/test.txt", 
+						"xyxy_640/val.txt"]
+	# label_tables_list = ["resize_640/label_test.txt"]
 	img_shape = (640, 640)
 	proc_name = "yolo"
 	style = "xyxy"
@@ -115,9 +104,9 @@ def label2yolo():
 
 
 def label2xyxy():
-	label_tables = ["labels/yolo_640/crop_640/original/train.txt",
-					"labels/yolo_640/crop_640/original/test.txt",
-					"labels/yolo_640/crop_640/original/other.txt"]
+	label_tables = ["Filter_TT100K/train.txt",
+					"Filter_TT100K/test.txt",
+					"Filter_TT100K/val.txt"]
 	img_shape = (640, 640)
 	proc_name = "xyxy"
 	style = "xywh"

@@ -39,7 +39,7 @@ class FormatConvert(ImageProc):
 					class_name = box.pop(0)
 					box = [float(i) for i in box]
 					box.insert(0, class_name)
-				boxes_coor.append(box)
+					boxes_coor.append(box)
 
 		return boxes_coor 
 
