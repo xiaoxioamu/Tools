@@ -64,14 +64,15 @@ def file_over_100(label_tables, proc_name, class_sum):
 			if new_bboxs:
 				img_new_path, label_new_path = image_label_new_path(label_path, proc_name)
 				label_save(label_new_path, new_bboxs)
-				shutil.copyfile(img_path, img_new_path)
+				# shutil.copyfile(img_path, img_new_path)
 
 
 if __name__ == "__main__":
-	label_tables = ["Filter_TT100K/train.txt",
-					"Filter_TT100K/test.txt"]
+	label_tables = ["yolo_640/train.txt",
+					"yolo_640/test.txt",
+					"yolo_640/val.txt"]
 	proc_name = 'filter'
 	class_all = class_sum(label_tables)
 	class_sum = class_over_100(class_all)
-	# file_over_100(label_tables, proc_name, class_sum)
+	file_over_100(label_tables, proc_name, class_sum)
 	class_sum

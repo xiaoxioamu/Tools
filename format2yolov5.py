@@ -50,7 +50,7 @@ def  format2yolov5_items(dir, class_file):
 
 
 if __name__ == "__main__":
-	dir = "Filter_TT100K"
+	dir = "filter"
 	class_file = 'class_list.txt'
 	get_class(dir, class_file)
-	class_index = format2yolov5_items(dir, class_file)
+	# class_index = format2yolov5_items(dir, class_file)
